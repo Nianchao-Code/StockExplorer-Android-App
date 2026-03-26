@@ -5,9 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background"
     tools:context=".StockSearchActivity">
 
-    <!-- Scrollable controls area (helps in landscape) -->
+    <!-- Navy header bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_search_title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <!-- Scrollable controls area -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,16 +36,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/stock_search_title"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_marginBottom="16dp" />
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp">
 
             <EditText
                 android:id="@+id/symbolInput"
@@ -35,21 +48,24 @@
                 android:hint="@string/symbol_hint"
                 android:inputType="textCapCharacters"
                 android:maxLines="1"
-                android:layout_marginBottom="12dp" />
+                android:textSize="16sp"
+                android:padding="14dp"
+                android:layout_marginBottom="14dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="14dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/record_count_label"
                     android:textSize="15sp"
-                    android:layout_marginEnd="8dp" />
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginEnd="12dp" />
 
                 <Spinner
                     android:id="@+id/recordCountSpinner"
@@ -63,14 +79,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="18dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/volume_filter_label"
                     android:textSize="15sp"
-                    android:layout_marginEnd="8dp" />
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginEnd="12dp" />
 
                 <Switch
                     android:id="@+id/volumeFilterSwitch"
@@ -82,8 +99,12 @@
             <Button
                 android:id="@+id/searchButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/search" />
+                android:layout_height="48dp"
+                android:text="@string/search"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorOnSecondary"
+                android:background="@drawable/btn_rounded_outline" />
 
         </LinearLayout>
 
@@ -96,18 +117,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="24dp" />
 
     <!-- Error message -->
     <TextView
         android:id="@+id/errorMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_red_dark"
+        android:textColor="@color/stock_down"
         android:textSize="14sp"
         android:visibility="gone"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:layout_marginTop="12dp" />
 
     <!-- Empty state -->
@@ -128,8 +149,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingTop="4dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="12dp"
         android:visibility="gone"
         tools:listitem="@layout/item_stock_record" />
 

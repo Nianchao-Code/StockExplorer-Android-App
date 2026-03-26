@@ -51,7 +51,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
 
         GradientDrawable badge = new GradientDrawable();
         badge.setColor(ContextCompat.getColor(holder.itemView.getContext(), bgColorRes));
-        badge.setCornerRadius(12f);
+        badge.setCornerRadius(20f);
         holder.trendText.setBackground(badge);
     }
 

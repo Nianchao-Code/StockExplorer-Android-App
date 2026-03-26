@@ -2,7 +2,8 @@
 <resources>
     <string name="app_name">StockExplorer</string>
     <string name="group_name">Group 5</string>
-    <string name="open_stock_search">Open Stock Search</string>
+    <string name="open_stock_search">Explore Stocks</string>
+    <string name="tagline">Track. Analyze. Invest.</string>
     <string name="stock_search_title">Stock Search</string>
     <string name="symbol_hint">Enter stock symbol (e.g. AAPL)</string>
     <string name="search">Search</string>

@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Primary: Dark Navy -->
+    <color name="colorPrimary">#1B2838</color>
+    <color name="colorPrimaryVariant">#0D1B2A</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+
+    <!-- Secondary: Amber / Gold -->
+    <color name="colorSecondary">#FFB300</color>
+    <color name="colorSecondaryVariant">#FF8F00</color>
+    <color name="colorOnSecondary">#000000</color>
+
+    <!-- Surface & Background -->
+    <color name="background">#F4F6F8</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_background">#FFFFFF</color>
+
+    <!-- Legacy (keep for compatibility) -->
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="stock_up">#4CAF50</color>
-    <color name="stock_down">#F44336</color>
+
+    <!-- Stock trend -->
+    <color name="stock_up">#2E7D32</color>
+    <color name="stock_down">#C62828</color>
     <color name="stock_up_bg">#1A4CAF50</color>
     <color name="stock_down_bg">#1AF44336</color>
-    <color name="divider">#E0E0E0</color>
-    <color name="text_secondary">#888888</color>
-</resources>
 
+    <!-- Utility -->
+    <color name="divider">#E0E0E0</color>
+    <color name="text_secondary">#78909C</color>
+    <color name="text_hint">#B0BEC5</color>
+</resources>
