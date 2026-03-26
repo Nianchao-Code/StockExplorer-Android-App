@@ -4,40 +4,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="14dp">
 
-        <!-- Row 1: Symbol + Trend -->
+        <!-- Row 1: Symbol + Trend badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="2dp">
 
             <TextView
                 android:id="@+id/symbolText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/trendText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp" />
 
         </LinearLayout>
 
@@ -47,29 +54,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp" />
+            android:textColor="#888888"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginBottom="10dp" />
 
         <!-- Row 3: Open / Close -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="6dp">
 
             <TextView
                 android:id="@+id/openText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textColor="#444444" />
 
             <TextView
                 android:id="@+id/closeText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textColor="#444444" />
 
         </LinearLayout>
 
@@ -78,21 +94,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="4dp">
+            android:layout_marginBottom="6dp">
 
             <TextView
                 android:id="@+id/highText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textColor="#444444" />
 
             <TextView
                 android:id="@+id/lowText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textColor="#444444" />
 
         </LinearLayout>
 
@@ -102,7 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:layout_marginTop="4dp" />
+            android:textColor="#444444" />
 
     </LinearLayout>
 

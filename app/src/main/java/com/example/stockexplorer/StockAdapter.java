@@ -1,5 +1,6 @@
 package com.example.stockexplorer;
 
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,15 +43,16 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHol
         holder.volumeText.setText(String.format(Locale.US, "Volume: %,d", record.getVolume()));
 
         boolean isUp = record.getClose() >= record.getOpen();
-        if (isUp) {
-            holder.trendText.setText("▲ Up");
-            holder.trendText.setTextColor(
-                    ContextCompat.getColor(holder.itemView.getContext(), R.color.stock_up));
-        } else {
-            holder.trendText.setText("▼ Down");
-            holder.trendText.setTextColor(
-                    ContextCompat.getColor(holder.itemView.getContext(), R.color.stock_down));
-        }
+        int colorRes = isUp ? R.color.stock_up : R.color.stock_down;
+        int bgColorRes = isUp ? R.color.stock_up_bg : R.color.stock_down_bg;
+        holder.trendText.setText(isUp ? "▲ Up" : "▼ Down");
+        holder.trendText.setTextColor(
+                ContextCompat.getColor(holder.itemView.getContext(), colorRes));
+
+        GradientDrawable badge = new GradientDrawable();
+        badge.setColor(ContextCompat.getColor(holder.itemView.getContext(), bgColorRes));
+        badge.setCornerRadius(12f);
+        holder.trendText.setBackground(badge);
     }
 
     @Override

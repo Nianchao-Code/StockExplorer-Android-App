@@ -8,5 +8,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="stock_up">#4CAF50</color>
     <color name="stock_down">#F44336</color>
+    <color name="stock_up_bg">#1A4CAF50</color>
+    <color name="stock_down_bg">#1AF44336</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="text_secondary">#888888</color>
 </resources>
 
