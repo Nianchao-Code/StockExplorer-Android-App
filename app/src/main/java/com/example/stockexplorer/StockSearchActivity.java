@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
 public class StockSearchActivity extends AppCompatActivity {
 
     private static final String FINNHUB_CANDLE_URL = "https://finnhub.io/api/v1/stock/candle";
-    private static final String API_KEY = "YOUR_API_KEY";
+    private static final String API_KEY = BuildConfig.FINNHUB_API_KEY;
 
     private static final long SECONDS_PER_DAY = 24L * 3600L;
     /** Request enough daily history to satisfy max spinner value (100). */
