@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StockExplorer</string>
+    <string name="group_name">Group 5</string>
+    <string name="open_stock_search">Open Stock Search</string>
+</resources>
+
