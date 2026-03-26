@@ -53,6 +53,8 @@ public class StockSearchActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView errorMessage;
     private RecyclerView resultsRecyclerView;
+    private TextView emptyStateText;
+    private StockAdapter stockAdapter;
 
     private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
 
@@ -73,14 +75,17 @@ public class StockSearchActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         errorMessage = findViewById(R.id.errorMessage);
         resultsRecyclerView = findViewById(R.id.resultsRecyclerView);
+        emptyStateText = findViewById(R.id.emptyStateText);
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, RECORD_COUNTS);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recordCountSpinner.setAdapter(spinnerAdapter);
 
+        stockAdapter = new StockAdapter(new ArrayList<>());
         if (resultsRecyclerView != null) {
             resultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            resultsRecyclerView.setAdapter(stockAdapter);
         }
 
         if (searchButton != null) {
@@ -162,14 +167,31 @@ public class StockSearchActivity extends AppCompatActivity {
     }
 
     /**
-     * Called after JSON parse + filter. Teammate can attach a RecyclerView.Adapter that reads
-     * {@link #lastStockResults} or you pass data into the adapter here later.
+     * Updates the RecyclerView adapter with new data and toggles empty-state visibility.
      */
     private void updateStockList(List<StockRecord> data) {
         if (data == null) {
             lastStockResults = new ArrayList<>();
         } else {
             lastStockResults = new ArrayList<>(data);
+        }
+
+        stockAdapter.updateData(lastStockResults);
+
+        if (lastStockResults.isEmpty()) {
+            if (resultsRecyclerView != null) {
+                resultsRecyclerView.setVisibility(View.GONE);
+            }
+            if (emptyStateText != null) {
+                emptyStateText.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (resultsRecyclerView != null) {
+                resultsRecyclerView.setVisibility(View.VISIBLE);
+            }
+            if (emptyStateText != null) {
+                emptyStateText.setVisibility(View.GONE);
+            }
         }
     }
 
