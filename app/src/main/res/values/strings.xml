@@ -8,5 +8,12 @@
     <string name="search">Search</string>
     <string name="record_count_label">Records:</string>
     <string name="volume_filter_label">Volume filter:</string>
+
+    <string name="error_empty_symbol">Please enter a stock symbol.</string>
+    <string name="error_network">Network error. Check your connection and try again.</string>
+    <string name="error_parse">Could not read server response.</string>
+    <string name="error_empty_response">Empty response from server.</string>
+    <string name="error_no_data">No candle data for this symbol.</string>
+    <string name="error_no_results_after_filter">No rows left after applying the volume filter.</string>
 </resources>
 
