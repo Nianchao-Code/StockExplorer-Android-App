@@ -10,6 +10,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class StockSearchActivity extends AppCompatActivity {
 
@@ -19,6 +21,7 @@ public class StockSearchActivity extends AppCompatActivity {
     private Button searchButton;
     private ProgressBar progressBar;
     private TextView errorMessage;
+    private RecyclerView resultsRecyclerView;
 
     private static final String[] RECORD_COUNTS = {"10", "25", "50", "100"};
 
@@ -33,10 +36,13 @@ public class StockSearchActivity extends AppCompatActivity {
         searchButton = findViewById(R.id.searchButton);
         progressBar = findViewById(R.id.progressBar);
         errorMessage = findViewById(R.id.errorMessage);
+        resultsRecyclerView = findViewById(R.id.resultsRecyclerView);
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, RECORD_COUNTS);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recordCountSpinner.setAdapter(spinnerAdapter);
+
+        resultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }
