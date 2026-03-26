@@ -1,22 +1,110 @@
-# StockExplorer (Android)
+# StockExplorer
 
-Android Studio **Java** course project (StockExplorer).
+An Android stock market explorer app built with **Java** and **XML Views**. Search for any US stock symbol, view daily OHLCV data (Open, High, Low, Close, Volume), and quickly identify market trends with visual indicators.
 
-## Running the app (Alpha Vantage API key)
+Built as a course project for **CS 5520** by **Group 5**.
 
-This project reads an **Alpha Vantage** API key from your local (uncommitted) `local.properties`.
+## Features
 
-1. Get a **free** API key from Alpha Vantage:  
-   https://www.alphavantage.co/support/#api-key
-2. In the project root, add **exactly one line** to `local.properties` (no quotes, no spaces around `=`):
+- Search stocks by ticker symbol (e.g. AAPL, TSLA, MSFT)
+- View up to 100 days of historical daily price data
+- Configurable record count (10 / 25 / 50 / 100)
+- Volume filter to show only high-volume trading days (> 1M)
+- Trend indicators on each record (green up / red down)
+- Clean card-based UI with professional navy and amber theme
+- Handles errors gracefully (network issues, invalid symbols, rate limits)
+- Landscape and portrait orientation support
+
+## Screenshots
+
+| Main Screen | Search Results |
+|:-----------:|:--------------:|
+| Dark navy landing page with app icon, title, and "Explore Stocks" button | Stock cards showing symbol, date, OHLCV data, and trend badges |
+
+## Tech Stack
+
+- **Language:** Java
+- **UI:** Android XML Views with Material Components
+- **API:** [Alpha Vantage](https://www.alphavantage.co/) — TIME_SERIES_DAILY
+- **Networking:** HttpURLConnection (no third-party libraries)
+- **Architecture:** Single-activity flow with RecyclerView + custom adapter
+- **Min SDK:** 24 (Android 7.0)
+- **Target SDK:** 34
+
+## Project Structure
+
+```
+app/src/main/
+├── java/com/example/stockexplorer/
+│   ├── MainActivity.java          # Landing page with navigation
+│   ├── StockSearchActivity.java   # Search screen, API calls, filtering
+│   ├── StockAdapter.java          # RecyclerView adapter with ViewHolder
+│   └── StockRecord.java           # Data model (symbol, date, OHLCV)
+├── res/
+│   ├── layout/
+│   │   ├── activity_main.xml          # Landing page layout
+│   │   ├── activity_stock_search.xml  # Search screen layout
+│   │   └── item_stock_record.xml      # Stock card item layout
+│   ├── drawable/
+│   │   ├── ic_launcher_foreground.xml # Custom app icon (diamond + $)
+│   │   ├── btn_rounded.xml            # Rounded amber button
+│   │   └── btn_rounded_outline.xml    # Rounded amber button variant
+│   └── values/
+│       ├── colors.xml       # Navy/amber color palette
+│       ├── strings.xml      # All string resources
+│       └── themes.xml       # Material theme configuration
+└── AndroidManifest.xml      # Permissions and activity declarations
+```
+
+## Setup
+
+### Prerequisites
+
+- Android Studio (Arctic Fox or later)
+- JDK 8+
+- Android SDK 34
+
+### API Key
+
+This app uses the **Alpha Vantage** API. The free tier allows approximately 25 requests per day.
+
+1. Get a free API key at: https://www.alphavantage.co/support/#api-key
+2. Open `local.properties` in the project root and add:
 
 ```
 ALPHA_VANTAGE_API_KEY=YOUR_KEY_HERE
 ```
 
-3. Sync Gradle and run the app.
+3. Sync Gradle in Android Studio (File > Sync Project with Gradle Files)
+4. Build and run
 
-Notes:
-- `local.properties` should not be committed.
-- Alpha Vantage **free tier** has strict rate limits (often ~5 calls/minute). If you search repeatedly, you may see a rate-limit message—wait ~1 minute and try again.
-- If you previously used `FINNHUB_API_KEY`, remove it and use `ALPHA_VANTAGE_API_KEY` instead (this project no longer calls Finnhub).
+> **Note:** `local.properties` is gitignored and should never be committed. Each developer needs their own key.
+
+### Build
+
+```bash
+./gradlew assembleDebug
+```
+
+## Usage
+
+1. Launch the app to see the landing page
+2. Tap **Explore Stocks** to open the search screen
+3. Enter a stock symbol (e.g. `AAPL`)
+4. Select how many records to display (10, 25, 50, or 100)
+5. Optionally enable the volume filter to show only high-volume days
+6. Tap **Search** to fetch and display results
+7. Each card shows the date, OHLCV values, and a trend indicator:
+   - **▲ Up** (green) — closing price >= opening price
+   - **▼ Down** (red) — closing price < opening price
+
+## Team
+
+| Member | Role |
+|--------|------|
+| Person A | Backend: API integration, data parsing, networking, error handling |
+| Person B | Frontend: UI layouts, RecyclerView adapter, themes, app icon, polish |
+
+## Rate Limits
+
+Alpha Vantage free tier is limited to **25 requests/day** and **5 requests/minute**. If you see a rate limit error, wait about a minute before searching again.
