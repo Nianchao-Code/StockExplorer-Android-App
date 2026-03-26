@@ -85,6 +85,7 @@ public class StockSearchActivity extends AppCompatActivity {
         stockAdapter = new StockAdapter(new ArrayList<>());
         if (resultsRecyclerView != null) {
             resultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            resultsRecyclerView.setHasFixedSize(true);
             resultsRecyclerView.setAdapter(stockAdapter);
         }
 
@@ -124,6 +125,7 @@ public class StockSearchActivity extends AppCompatActivity {
         final boolean volumeFilterOn = volumeFilterSwitch != null && volumeFilterSwitch.isChecked();
 
         hideError();
+        clearResultsForNewSearch();
         setLoading(true);
 
         networkExecutor.execute(() -> {
@@ -131,7 +133,6 @@ public class StockSearchActivity extends AppCompatActivity {
                 List<StockRecord> parsed = fetchAndParseCandles(symbol, maxRecordsFinal);
                 List<StockRecord> filtered = applyVolumeFilter(parsed, volumeFilterOn);
                 runOnUiThread(() -> {
-                    setLoading(false);
                     if (filtered.isEmpty()) {
                         showError(getString(R.string.error_no_results_after_filter));
                         updateStockList(filtered);
@@ -142,19 +143,21 @@ public class StockSearchActivity extends AppCompatActivity {
                 });
             } catch (IOException e) {
                 runOnUiThread(() -> {
-                    setLoading(false);
-                    showError(getString(R.string.error_network));
+                    String msg = e.getMessage();
+                    if (!TextUtils.isEmpty(msg) && msg.startsWith("HTTP ")) {
+                        showError(getString(R.string.error_api));
+                    } else {
+                        showError(getString(R.string.error_network));
+                    }
                     updateStockList(new ArrayList<>());
                 });
             } catch (JSONException e) {
                 runOnUiThread(() -> {
-                    setLoading(false);
                     showError(getString(R.string.error_parse));
                     updateStockList(new ArrayList<>());
                 });
             } catch (IllegalStateException e) {
                 runOnUiThread(() -> {
-                    setLoading(false);
                     String msg = e.getMessage();
                     if (TextUtils.isEmpty(msg)) {
                         msg = getString(R.string.error_empty_response);
@@ -162,8 +165,32 @@ public class StockSearchActivity extends AppCompatActivity {
                     showError(msg);
                     updateStockList(new ArrayList<>());
                 });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    showError(getString(R.string.error_unexpected));
+                    updateStockList(new ArrayList<>());
+                });
+            } finally {
+                runOnUiThread(() -> setLoading(false));
             }
         });
+    }
+
+    /**
+     * Clears the current results UI before starting a new request.
+     * Keeps the screen clean while loading (no stale results, no empty message).
+     */
+    private void clearResultsForNewSearch() {
+        if (stockAdapter != null) {
+            stockAdapter.updateData(new ArrayList<>());
+        }
+        lastStockResults = new ArrayList<>();
+        if (resultsRecyclerView != null) {
+            resultsRecyclerView.setVisibility(View.GONE);
+        }
+        if (emptyStateText != null) {
+            emptyStateText.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -225,18 +252,21 @@ public class StockSearchActivity extends AppCompatActivity {
         }
 
         JSONObject json = new JSONObject(body);
-        String status = json.optString("s");
+        String status = json.optString("s", "");
         if (!"ok".equals(status)) {
-            throw new IllegalStateException(
-                    getApplicationContext().getString(R.string.error_no_data));
+            // Finnhub commonly returns {"s":"no_data"} for invalid/unsupported symbols.
+            throw new IllegalStateException(getString(R.string.error_no_data));
         }
 
-        JSONArray tArr = json.getJSONArray("t");
-        JSONArray oArr = json.getJSONArray("o");
-        JSONArray cArr = json.getJSONArray("c");
-        JSONArray hArr = json.getJSONArray("h");
-        JSONArray lArr = json.getJSONArray("l");
-        JSONArray vArr = json.getJSONArray("v");
+        JSONArray tArr = json.optJSONArray("t");
+        JSONArray oArr = json.optJSONArray("o");
+        JSONArray cArr = json.optJSONArray("c");
+        JSONArray hArr = json.optJSONArray("h");
+        JSONArray lArr = json.optJSONArray("l");
+        JSONArray vArr = json.optJSONArray("v");
+        if (tArr == null || oArr == null || cArr == null || hArr == null || lArr == null || vArr == null) {
+            throw new IllegalStateException(getString(R.string.error_no_data));
+        }
 
         int n = tArr.length();
         if (n == 0) {
@@ -296,9 +326,16 @@ public class StockSearchActivity extends AppCompatActivity {
                     ? connection.getInputStream()
                     : connection.getErrorStream();
             if (inputStream == null) {
-                return "";
+                if (code >= 200 && code < 300) {
+                    return "";
+                }
+                throw new IOException("HTTP " + code);
             }
-            return readStreamFully(inputStream);
+            String body = readStreamFully(inputStream);
+            if (code < 200 || code >= 300) {
+                throw new IOException("HTTP " + code);
+            }
+            return body;
         } finally {
             if (inputStream != null) {
                 try {
