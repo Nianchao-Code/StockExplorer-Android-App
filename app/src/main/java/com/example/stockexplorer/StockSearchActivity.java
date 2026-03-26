@@ -176,14 +176,19 @@ public class StockSearchActivity extends AppCompatActivity {
             lastStockResults = new ArrayList<>(data);
         }
 
-        stockAdapter.updateData(lastStockResults);
+        if (stockAdapter != null) {
+            stockAdapter.updateData(lastStockResults);
+        }
+
+        boolean hasError = errorMessage != null && errorMessage.getVisibility() == View.VISIBLE
+                && !TextUtils.isEmpty(errorMessage.getText());
 
         if (lastStockResults.isEmpty()) {
             if (resultsRecyclerView != null) {
                 resultsRecyclerView.setVisibility(View.GONE);
             }
             if (emptyStateText != null) {
-                emptyStateText.setVisibility(View.VISIBLE);
+                emptyStateText.setVisibility(hasError ? View.GONE : View.VISIBLE);
             }
         } else {
             if (resultsRecyclerView != null) {
@@ -331,6 +336,12 @@ public class StockSearchActivity extends AppCompatActivity {
         if (errorMessage != null) {
             errorMessage.setText(message);
             errorMessage.setVisibility(View.VISIBLE);
+        }
+        if (resultsRecyclerView != null) {
+            resultsRecyclerView.setVisibility(View.GONE);
+        }
+        if (emptyStateText != null) {
+            emptyStateText.setVisibility(View.GONE);
         }
     }
 
