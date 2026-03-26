@@ -1,5 +1,6 @@
 package com.example.stockexplorer;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.example.stockexplorer.BuildConfig;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -113,6 +116,11 @@ public class StockSearchActivity extends AppCompatActivity {
             return;
         }
 
+        if (TextUtils.isEmpty(BuildConfig.FINNHUB_API_KEY)) {
+            showError(getString(R.string.error_missing_api_key));
+            return;
+        }
+
         final String symbol = rawSymbol.toUpperCase(Locale.US);
         int maxRecords;
         try {
@@ -144,8 +152,9 @@ public class StockSearchActivity extends AppCompatActivity {
             } catch (IOException e) {
                 runOnUiThread(() -> {
                     String msg = e.getMessage();
-                    if (!TextUtils.isEmpty(msg) && msg.startsWith("HTTP ")) {
-                        showError(getString(R.string.error_api));
+                    Integer httpCode = parseHttpCodeFromMessage(msg);
+                    if (httpCode != null) {
+                        showError(getString(R.string.error_api_http, httpCode));
                     } else {
                         showError(getString(R.string.error_network));
                     }
@@ -238,12 +247,14 @@ public class StockSearchActivity extends AppCompatActivity {
         long toSec = System.currentTimeMillis() / 1000L;
         long fromSec = toSec - CANDLE_LOOKBACK_SECONDS;
 
-        String urlString = FINNHUB_CANDLE_URL
-                + "?symbol=" + symbol
-                + "&resolution=D"
-                + "&from=" + fromSec
-                + "&to=" + toSec
-                + "&token=" + API_KEY;
+        String urlString = Uri.parse(FINNHUB_CANDLE_URL).buildUpon()
+                .appendQueryParameter("symbol", symbol)
+                .appendQueryParameter("resolution", "D")
+                .appendQueryParameter("from", String.valueOf(fromSec))
+                .appendQueryParameter("to", String.valueOf(toSec))
+                .appendQueryParameter("token", API_KEY)
+                .build()
+                .toString();
 
         String body = httpGet(urlString);
         if (TextUtils.isEmpty(body)) {
@@ -309,6 +320,18 @@ public class StockSearchActivity extends AppCompatActivity {
             }
         }
         return out;
+    }
+
+    /** Parses our synthetic messages like "HTTP 403" from {@link #httpGet}. */
+    private static Integer parseHttpCodeFromMessage(String message) {
+        if (TextUtils.isEmpty(message) || !message.startsWith("HTTP ")) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(message.substring("HTTP ".length()).trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private String httpGet(String urlString) throws IOException {
