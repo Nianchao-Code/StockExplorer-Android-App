@@ -17,7 +17,8 @@
     <string name="error_no_results_after_filter">No rows left after applying the volume filter.</string>
     <string name="error_missing_api_key">Missing API key. Add FINNHUB_API_KEY to local.properties (the API Key from Finnhub, not the Webhook secret), then Sync Gradle.</string>
     <string name="error_api">API error. Please try again later.</string>
-    <string name="error_api_http">API error (HTTP %1$d). Check FINNHUB_API_KEY in local.properties (use the API Key from Finnhub dashboard, one line only), then Sync Gradle.</string>
+    <string name="error_api_http">API error (HTTP %1$d). Verify your network, Finnhub status, and that FINNHUB_API_KEY in local.properties is correct, then Sync Gradle.</string>
+    <string name="error_finnhub_403">HTTP 403 from Finnhub: your API key is likely valid, but Stock Candles (/stock/candle) is not available on your Finnhub plan. Finnhub may require a paid subscription for this endpoint. Ask your instructor for a key with access, upgrade Finnhub, or follow your course data-source policy.</string>
     <string name="error_unexpected">Something went wrong. Please try again.</string>
     <string name="empty_state_message">Search for a stock symbol to see results.</string>
 </resources>

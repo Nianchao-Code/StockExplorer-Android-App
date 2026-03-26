@@ -18,5 +18,7 @@ FINNHUB_API_KEY=YOUR_KEY_HERE
 
 Notes:
 - `local.properties` should not be committed.
-- If `FINNHUB_API_KEY` is missing or wrong, requests will fail (often HTTP 401/403) and the app will show an API error.
+- If `FINNHUB_API_KEY` is missing or invalid, requests may fail with **HTTP 401** (unauthorized).
+- If you see **HTTP 403** on `/stock/candle`, Finnhub is usually rejecting access to that **endpoint for your subscription** (not necessarily a “wrong key” typo). Finnhub has reported that some market data endpoints require a paid plan. Options: use a Finnhub plan that includes Stock Candles, ask your instructor for a key with access, or follow your course’s allowed data source.
+
 

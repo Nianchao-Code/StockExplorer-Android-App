@@ -154,7 +154,11 @@ public class StockSearchActivity extends AppCompatActivity {
                     String msg = e.getMessage();
                     Integer httpCode = parseHttpCodeFromMessage(msg);
                     if (httpCode != null) {
-                        showError(getString(R.string.error_api_http, httpCode));
+                        if (httpCode == 403) {
+                            showError(getString(R.string.error_finnhub_403));
+                        } else {
+                            showError(getString(R.string.error_api_http, httpCode));
+                        }
                     } else {
                         showError(getString(R.string.error_network));
                     }
@@ -341,6 +345,8 @@ public class StockSearchActivity extends AppCompatActivity {
             URL url = URI.create(urlString).toURL();
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("User-Agent", "StockExplorer/1.0 (Android)");
             connection.setConnectTimeout(15_000);
             connection.setReadTimeout(15_000);
 
