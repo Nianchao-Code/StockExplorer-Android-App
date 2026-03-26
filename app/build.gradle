@@ -2,13 +2,13 @@ plugins {
     id "com.android.application"
 }
 
-// Read FINNHUB_API_KEY from root local.properties (not committed). project.findProperty() does not load it.
+// Read ALPHA_VANTAGE_API_KEY from root local.properties (not committed).
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withInputStream { stream -> localProperties.load(stream) }
 }
-def finnhubApiKey = (localProperties.getProperty("FINNHUB_API_KEY", "") ?: "").trim()
+def alphaVantageApiKey = (localProperties.getProperty("ALPHA_VANTAGE_API_KEY", "") ?: "").trim()
 
 android {
     namespace "com.example.stockexplorer"
@@ -25,7 +25,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        buildConfigField "String", "FINNHUB_API_KEY", "\"${finnhubApiKey}\""
+        buildConfigField "String", "ALPHA_VANTAGE_API_KEY", "\"${alphaVantageApiKey}\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

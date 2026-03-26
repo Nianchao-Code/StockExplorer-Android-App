@@ -12,13 +12,10 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.stockexplorer.BuildConfig;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,9 +27,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -40,12 +37,8 @@ import java.util.concurrent.Executors;
 
 public class StockSearchActivity extends AppCompatActivity {
 
-    private static final String FINNHUB_CANDLE_URL = "https://finnhub.io/api/v1/stock/candle";
-    private static final String API_KEY = BuildConfig.FINNHUB_API_KEY;
-
-    private static final long SECONDS_PER_DAY = 24L * 3600L;
-    /** Request enough daily history to satisfy max spinner value (100). */
-    private static final long CANDLE_LOOKBACK_SECONDS = 400L * SECONDS_PER_DAY;
+    private static final String ALPHAVANTAGE_QUERY_URL = "https://www.alphavantage.co/query";
+    private static final String API_KEY = BuildConfig.ALPHA_VANTAGE_API_KEY;
 
     private static final long VOLUME_FILTER_THRESHOLD = 1_000_000L;
 
@@ -116,7 +109,7 @@ public class StockSearchActivity extends AppCompatActivity {
             return;
         }
 
-        if (TextUtils.isEmpty(BuildConfig.FINNHUB_API_KEY)) {
+        if (TextUtils.isEmpty(BuildConfig.ALPHA_VANTAGE_API_KEY)) {
             showError(getString(R.string.error_missing_api_key));
             return;
         }
@@ -138,7 +131,7 @@ public class StockSearchActivity extends AppCompatActivity {
 
         networkExecutor.execute(() -> {
             try {
-                List<StockRecord> parsed = fetchAndParseCandles(symbol, maxRecordsFinal);
+                List<StockRecord> parsed = fetchAndParseDailySeries(symbol, maxRecordsFinal);
                 List<StockRecord> filtered = applyVolumeFilter(parsed, volumeFilterOn);
                 runOnUiThread(() -> {
                     if (filtered.isEmpty()) {
@@ -154,11 +147,7 @@ public class StockSearchActivity extends AppCompatActivity {
                     String msg = e.getMessage();
                     Integer httpCode = parseHttpCodeFromMessage(msg);
                     if (httpCode != null) {
-                        if (httpCode == 403) {
-                            showError(getString(R.string.error_finnhub_403));
-                        } else {
-                            showError(getString(R.string.error_api_http, httpCode));
-                        }
+                        showError(getString(R.string.error_api_http, httpCode));
                     } else {
                         showError(getString(R.string.error_network));
                     }
@@ -245,18 +234,17 @@ public class StockSearchActivity extends AppCompatActivity {
         return new ArrayList<>(lastStockResults);
     }
 
-    private List<StockRecord> fetchAndParseCandles(String symbol, int maxRecords)
+    /**
+     * Alpha Vantage TIME_SERIES_DAILY. Uses outputsize=compact (up to ~100 daily points).
+     */
+    private List<StockRecord> fetchAndParseDailySeries(String symbol, int maxRecords)
             throws IOException, JSONException {
 
-        long toSec = System.currentTimeMillis() / 1000L;
-        long fromSec = toSec - CANDLE_LOOKBACK_SECONDS;
-
-        String urlString = Uri.parse(FINNHUB_CANDLE_URL).buildUpon()
+        String urlString = Uri.parse(ALPHAVANTAGE_QUERY_URL).buildUpon()
+                .appendQueryParameter("function", "TIME_SERIES_DAILY")
                 .appendQueryParameter("symbol", symbol)
-                .appendQueryParameter("resolution", "D")
-                .appendQueryParameter("from", String.valueOf(fromSec))
-                .appendQueryParameter("to", String.valueOf(toSec))
-                .appendQueryParameter("token", API_KEY)
+                .appendQueryParameter("outputsize", "compact")
+                .appendQueryParameter("apikey", API_KEY)
                 .build()
                 .toString();
 
@@ -267,50 +255,44 @@ public class StockSearchActivity extends AppCompatActivity {
         }
 
         JSONObject json = new JSONObject(body);
-        String status = json.optString("s", "");
-        if (!"ok".equals(status)) {
-            // Finnhub commonly returns {"s":"no_data"} for invalid/unsupported symbols.
+
+        if (json.has("Error Message")) {
+            throw new IllegalStateException(getString(R.string.error_no_data));
+        }
+        if (json.has("Note")) {
+            throw new IllegalStateException(getString(R.string.error_alpha_vantage_rate_limit));
+        }
+
+        JSONObject series = json.optJSONObject("Time Series (Daily)");
+        if (series == null) {
             throw new IllegalStateException(getString(R.string.error_no_data));
         }
 
-        JSONArray tArr = json.optJSONArray("t");
-        JSONArray oArr = json.optJSONArray("o");
-        JSONArray cArr = json.optJSONArray("c");
-        JSONArray hArr = json.optJSONArray("h");
-        JSONArray lArr = json.optJSONArray("l");
-        JSONArray vArr = json.optJSONArray("v");
-        if (tArr == null || oArr == null || cArr == null || hArr == null || lArr == null || vArr == null) {
-            throw new IllegalStateException(getString(R.string.error_no_data));
+        Iterator<String> keyIterator = series.keys();
+        List<String> dates = new ArrayList<>();
+        while (keyIterator.hasNext()) {
+            dates.add(keyIterator.next());
         }
+        Collections.sort(dates);
 
-        int n = tArr.length();
-        if (n == 0) {
+        if (dates.isEmpty()) {
             throw new IllegalStateException(
                     getApplicationContext().getString(R.string.error_empty_response));
         }
-        if (oArr.length() != n || cArr.length() != n || hArr.length() != n
-                || lArr.length() != n || vArr.length() != n) {
-            throw new JSONException("Mismatched array lengths");
+
+        int fromIndex = Math.max(0, dates.size() - maxRecords);
+        List<StockRecord> out = new ArrayList<>();
+        for (int i = fromIndex; i < dates.size(); i++) {
+            String date = dates.get(i);
+            JSONObject day = series.getJSONObject(date);
+            double open = Double.parseDouble(day.getString("1. open").trim());
+            double high = Double.parseDouble(day.getString("2. high").trim());
+            double low = Double.parseDouble(day.getString("3. low").trim());
+            double close = Double.parseDouble(day.getString("4. close").trim());
+            long volume = Math.round(Double.parseDouble(day.getString("5. volume").trim()));
+            out.add(new StockRecord(symbol, date, open, close, high, low, volume));
         }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
-        List<StockRecord> all = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) {
-            long tsSec = tArr.getLong(i);
-            double open = oArr.getDouble(i);
-            double close = cArr.getDouble(i);
-            double high = hArr.getDouble(i);
-            double low = lArr.getDouble(i);
-            long volume = vArr.getLong(i);
-            String dateStr = dateFormat.format(new Date(tsSec * 1000L));
-            all.add(new StockRecord(symbol, dateStr, open, close, high, low, volume));
-        }
-
-        // Finnhub returns timestamps ascending; keep the most recent maxRecords.
-        int fromIndex = Math.max(0, all.size() - maxRecords);
-        List<StockRecord> slice = new ArrayList<>(all.subList(fromIndex, all.size()));
-        return slice;
+        return out;
     }
 
     private List<StockRecord> applyVolumeFilter(List<StockRecord> records, boolean enabled) {

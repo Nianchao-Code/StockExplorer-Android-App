@@ -1,7 +1,7 @@
 package com.example.stockexplorer;
 
 /**
- * One row of stock candle data from Finnhub /stock/candle (daily or other resolution).
+ * One row of daily OHLCV data (e.g. Alpha Vantage TIME_SERIES_DAILY).
  */
 public class StockRecord {
 
