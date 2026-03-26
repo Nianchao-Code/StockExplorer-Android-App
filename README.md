@@ -110,8 +110,8 @@ ALPHA_VANTAGE_API_KEY=YOUR_KEY_HERE
 
 | Member | Role |
 |--------|------|
-| Person A | Backend: API integration, data parsing, networking, error handling |
-| Person B | Frontend: UI layouts, RecyclerView adapter, themes, app icon, polish |
+| Nianchao | Backend: API integration, data parsing, networking, error handling |
+| Qinyuan | Frontend: UI layouts, RecyclerView adapter, themes, app icon, polish |
 
 ## Rate Limits
 
