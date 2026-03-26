@@ -114,6 +114,7 @@ public class StockSearchActivity extends AppCompatActivity {
         } catch (Exception e) {
             maxRecords = 10;
         }
+        final int maxRecordsFinal = maxRecords;
 
         final boolean volumeFilterOn = volumeFilterSwitch != null && volumeFilterSwitch.isChecked();
 
@@ -122,7 +123,7 @@ public class StockSearchActivity extends AppCompatActivity {
 
         networkExecutor.execute(() -> {
             try {
-                List<StockRecord> parsed = fetchAndParseCandles(symbol, maxRecords);
+                List<StockRecord> parsed = fetchAndParseCandles(symbol, maxRecordsFinal);
                 List<StockRecord> filtered = applyVolumeFilter(parsed, volumeFilterOn);
                 runOnUiThread(() -> {
                     setLoading(false);
