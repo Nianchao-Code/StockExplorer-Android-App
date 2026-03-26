@@ -6,5 +6,7 @@
     <string name="stock_search_title">Stock Search</string>
     <string name="symbol_hint">Enter stock symbol (e.g. AAPL)</string>
     <string name="search">Search</string>
+    <string name="record_count_label">Records:</string>
+    <string name="volume_filter_label">Volume filter:</string>
 </resources>
 
