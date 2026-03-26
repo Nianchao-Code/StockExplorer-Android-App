@@ -4,6 +4,14 @@ An Android stock market explorer app built with **Java** and **XML Views**. Sear
 
 Built as a course project for **CS 5520** by **Group 5**.
 
+## Course / grading notes
+
+- **Group assignment:** one shared app; **MainActivity** shows the group name and a button that opens **StockSearchActivity** (this week’s stock search flow).
+- **Web service:** public, free-tier **[Alpha Vantage](https://www.alphavantage.co/)** — real market data (not synthetic). The user **does not** enter the API URL; the app builds the request in code.
+- **Networking:** **`HttpURLConnection`** only (no Volley, Retrofit, or other HTTP libraries).
+- **Threading:** network work runs on a background **`ExecutorService`**; UI updates on the main thread (**`AsyncTask` is not used**).
+- **Challenge-oriented UI:** multiple input controls (EditText, Spinner, Switch), **RecyclerView** for a variable-length result list, and trend styling on each row (not a single raw JSON dump).
+
 ## Features
 
 - Search stocks by ticker symbol (e.g. AAPL, TSLA, MSFT)
@@ -27,7 +35,7 @@ Built as a course project for **CS 5520** by **Group 5**.
 - **UI:** Android XML Views with Material Components
 - **API:** [Alpha Vantage](https://www.alphavantage.co/) — TIME_SERIES_DAILY
 - **Networking:** HttpURLConnection (no third-party libraries)
-- **Architecture:** Single-activity flow with RecyclerView + custom adapter
+- **Architecture:** **MainActivity** → **StockSearchActivity**; **RecyclerView** + custom adapter for results
 - **Min SDK:** 24 (Android 7.0)
 - **Target SDK:** 34
 
@@ -66,7 +74,7 @@ app/src/main/
 
 ### API Key
 
-This app uses the **Alpha Vantage** API. The free tier allows approximately 25 requests per day.
+This app uses the **Alpha Vantage** API. The **free tier has strict limits** (commonly around **25 requests per day** and **5 requests per minute** — see [Alpha Vantage](https://www.alphavantage.co/support/#support) for current rules).
 
 1. Get a free API key at: https://www.alphavantage.co/support/#api-key
 2. Open `local.properties` in the project root and add:
